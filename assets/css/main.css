@@ -228,3 +228,69 @@ ul{
 .social-links a{margin: 0 15px; color: var(--white); margin: 0 15px; transition: color 0.3s;}
 
 .social-links a:hover{color: var(--acent-color);}
+
+html, body {
+    overflow-x: hidden; /* Corta cualquier cosa que se salga del ancho */
+    width: 100%;
+    position: relative;
+}
+
+/* 2. AJUSTES PARA PANTALLAS PEQUEÑAS (Móviles) */
+@media (max-width: 768px) {
+
+    /* HEADER: Convertimos la fila en una columna apilada */
+    .container-nav {
+        flex-direction: column; /* Apila: 1.Logo, 2.Menú, 3.Buscador */
+        height: auto;           /* Permite que el header crezca hacia abajo */
+        padding: 15px;          /* Reducimos el padding lateral excesivo */
+        gap: 15px;              /* Espacio entre los elementos apilados */
+    }
+
+    /* LOGO: Lo centramos */
+    .logo {
+        margin-bottom: 5px;
+    }
+
+    /* MENÚ: Lo centramos y damos espacio a los dedos */
+    .main-menu {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .main-menu ul {
+        flex-wrap: wrap;        /* Si no caben, bajan de línea */
+        justify-content: center;
+        gap: 20px;              /* Más espacio entre 'Inicio', 'Ropa', etc. */
+        padding: 0;
+    }
+
+    /* BUSCADOR: Que ocupe todo el ancho para ser fácil de tocar */
+    .search-bar {
+        width: 100%;     /* Ocupa todo el ancho disponible */
+        max-width: 100%; /* Asegura que no se salga */
+        margin-top: 5px;
+    }
+
+    /* HERO (Sección negra): Ajustes de texto */
+    .hero {
+        height: auto;       /* Quitamos altura fija */
+        min-height: 50vh;   /* Altura mínima */
+        padding: 40px 20px; /* Espacio interior */
+    }
+
+    .hero h2 {
+        font-size: 2.2rem; /* Texto un poco más pequeño para que no se corte */
+        line-height: 1.2;
+    }
+
+    /* GRID CATEGORÍAS: Ajuste de márgenes */
+    .section-padding {
+        padding: 40px 15px; /* Menos margen lateral en móvil */
+    }
+   
+    /* Asegura que las tarjetas no sean más anchas que la pantalla */
+    .grid-categorias {
+        grid-template-columns: 1fr; /* Una sola columna en móviles muy estrechos */
+        padding: 0 10px;
+    }
+}
