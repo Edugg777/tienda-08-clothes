@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categoría | 08 ClotheS</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container-nav">
+            <div class="logo">
+                <a href="index.html"><span class="highlights">08 ClotheS</span></a>
+            </div>
+            <nav class="main-menu">
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    </ul>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="¿Qué estas buscando?">
+            </div>
+        </div>
+    </header>
+
+    <section class="section-padding">
+        <h2 id="titulo-categoria" class="section-title">Cargando...</h2>
+        <div id="contenedor-productos" class="grid-categorias">
+            </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Tienda De Ropa || 08 ClotheS</p>
+    </footer>
+
+    <script>
+        // 1. CONFIGURACIÓN
+        const configuracion = {
+            'vaqueros':  { titulo: 'Jeans',               carpeta: 'Vaqueros' }, // Revisa si tu carpeta es 'Jeans' o 'Vaqueros'
+            'abrigos':   { titulo: 'Abrigos y Chaquetas', carpeta: 'Abrigos-Chaquetas' },
+            'camisetas': { titulo: 'Camisetas',           carpeta: 'Camisetas' },
+            'chandals':  { titulo: 'Chandals',            carpeta: 'Chandals' }
+        };
+
+        // 2. PARAMETROS URL
+        const params = new URLSearchParams(window.location.search);
+        const catUrl = params.get('cat');
+        const marcaUrl = params.get('marca');
+
+        // 3. DOM ELEMENTS
+        const info = configuracion[catUrl];
+        const contenedor = document.getElementById('contenedor-productos');
+        const titulo = document.getElementById('titulo-categoria');
+
+        // 4. LÓGICA PRINCIPAL
+        if (info) {
+            const rutaLista = `assets/img/ui/${info.carpeta}/lista.txt`;
+            console.log("Leyendo lista desde:", rutaLista);
+
+            fetch(rutaLista)
+                .then(respuesta => {
+                    if (!respuesta.ok) throw new Error(`No se encontró ${rutaLista}`);
+                    return respuesta.text();
+                })
+                .then(texto => {
+                    // Limpiamos la lista de imágenes (quitamos espacios y líneas vacías)
+                    const todasLasImagenes = texto.split('\n')
+                        .map(linea => linea.trim())
+                        .filter(linea => linea.length > 0); // CORREGIDO: length
+
+                    // LÓGICA DE DECISIÓN: ¿Marcas o Productos?
+                    if (!marcaUrl) {
+                        // Si NO hay marca seleccionada -> Mostrar lista de Marcas
+                        titulo.textContent = `Marcas de ${info.titulo}`;
+                        mostrarMarcas(todasLasImagenes, info);
+                    } else {
+                        // Si SÍ hay marca -> Mostrar productos de esa marca
+                        titulo.innerHTML = `${info.titulo} <small>/ ${marcaUrl}</small>`;
+                        mostrarProductos(todasLasImagenes, info, marcaUrl);
+                    }
+                })
+                .catch(error => {
+                    console.error(error); // CORREGIDO: console.error
+                    contenedor.innerHTML = `<p>Error cargando contenido. Revisa la consola (F12).</p>`;
+                });
+
+        } else {
+            titulo.textContent = "Categoría no encontrada";
+            contenedor.innerHTML = "<p>Selecciona una categoría válida.</p>";
+        }
+
+        // --- FUNCIÓN PARA MOSTRAR LAS MARCAS (CARPETAS) ---
+        function mostrarMarcas(imagenes, info) {
+            const marcasUnicas = new Set();
+
+            imagenes.forEach(img => {
+                // 'Balenciaga/foto1.jpg' -> se queda con 'Balenciaga'
+                const partes = img.split('/');
+                if (partes.length > 1) { // CORREGIDO: length
+                    marcasUnicas.add(partes[0]);
+                }
+            });
+
+            // Si no hay subcarpetas, mostramos productos directamente
+            if (marcasUnicas.size === 0) {
+                mostrarProductos(imagenes, info, null);
+                return;
+            }
+
+            let html = '';
+            marcasUnicas.forEach(marca => {
+                // Buscamos la primera foto de esa marca para usarla de portada
+                const primeraFoto = imagenes.find(img => img.startsWith(marca + '/'));
+                const rutaPortada = `assets/img/ui/${info.carpeta}/${primeraFoto}`;
+
+                // CORREGIDO: categoria.html (no cateforia)
+                html += `
+                    <a href="categoria.html?cat=${catUrl}&marca=${marca}" class="cat-card">
+                        <img src="${rutaPortada}" alt="${marca}" onerror="this.src='assets/img/ui/default.jpg'">
+                        <div class="cat-overlay">
+                            <h3>${marca}</h3>
+                        </div>
+                    </a>`;
+            });
+            contenedor.innerHTML = html;
+        }
+
+        // --- FUNCIÓN PARA MOSTRAR LOS PRODUCTOS FINALES ---
+        function mostrarProductos(imagenes, info, filtroMarca) {
+            let html = '';
+
+            // Si hay filtro, mostramos solo las de esa marca. Si no, todas.
+            const imagenesAFiltrar = filtroMarca
+                ? imagenes.filter(img => img.startsWith(filtroMarca + '/'))
+                : imagenes;
+
+            // Botón de "Volver atrás" solo si estamos dentro de una marca
+            if (filtroMarca) {
+                html += `
+                <div style="width: 100%; margin-bottom: 20px;">
+                    <a href="categoria.html?cat=${catUrl}" class="btn-primary" style="display:inline-block; padding: 10px 20px; text-decoration: none; color: white;">
+                        <i class="fa-solid fa-arrow-left"></i> Volver a Marcas
+                    </a>
+                </div>`;
+            }
+
+            if (imagenesAFiltrar.length === 0) { // CORREGIDO: length
+                contenedor.innerHTML = "<p>No hay productos en esta selección.</p>";
+                return;
+            }
+
+            imagenesAFiltrar.forEach(imagen => {
+                // CORREGIDO: Quitamos el 'ui7' y pusimos 'ui'
+                const rutaImg = `assets/img/ui/${info.carpeta}/${imagen}`;
+
+                html += `
+                <div class="cat-card">
+                    <img src="${rutaImg}" alt="Producto" onerror="this.parentElement.style.display='none'">
+                    <div class="cat-overlay">
+                        <h3>Comprar</h3>
+                    </div>
+                </div>`;
+            });
+           
+            contenedor.innerHTML = html; // CORREGIDO: contenedor
+        }
+    </script>
+</body>
+</html>
