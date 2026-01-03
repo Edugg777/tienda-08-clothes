@@ -34,9 +34,9 @@
            
             <div class="contact-form" style="flex: 1; min-width: 300px; max-width: 500px;">
                 <h3>Envíanos un mensaje</h3>
-                <form action="#" method="POST" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
-                    <input type="text" placeholder="Tu Nombre" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                    <input type="email" placeholder="Tu Email" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <form name="contacto" method="POST" data-netlify="true" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                    <input name="nombre" type="text" placeholder="Tu Nombre" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <input name="email" type="email" placeholder="Tu Email" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
                     <textarea rows="5" placeholder="¿En qué podemos ayudarte?" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
                     <button type="submit" class="btn-primary" style="border: none; cursor: pointer;">Enviar Mensaje</button>
                 </form>

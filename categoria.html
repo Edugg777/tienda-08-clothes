@@ -166,6 +166,59 @@
            
             contenedor.innerHTML = html; // CORREGIDO: contenedor
         }
+         const inputBuscador= document.querySelector('.search-bar input');
+    const botonBuscador = document.querySelector ('.search-bar button');
+
+    const diccionario = {
+
+        'vaqueros' : 'vaqueros',
+        'jeans' : 'vaqueros',
+        'pantalones' : 'vaqueros',
+        'pantalon largo' : 'vaqueros',
+
+        'camisetas' : 'camisetas',
+        'camisetas manga corta' : 'camisetas',
+        'camisetas de futbol' : 'camisetas',
+        
+        'abrigos' : 'abrigos',
+        'chaquetas' : 'abrigos',
+        'corta vientos' : 'abrigos',
+
+        'chandals' : 'chandals',
+        'conjuntos' : 'chandals'
+        
+    };
+
+    function realizarBusqueda(){
+
+        const termino = inputBuscador.value.toLowerCase().trim();
+
+        if (termino==="") return;
+
+        let categoriaDestino = diccionario[termino];
+
+        if (categoriaDestino){
+
+            window.location.href = `categoria.html?cat=${categoriaDestino}`;
+        } else{
+            alert(`Lo sentimos, no tenemos resultados para: "${termino}". `);
+        }
+    
+    }
+
+    if (botonBuscador){
+        botonBuscador.addEventListener('click', realizarBusqueda);
+    }
+
+    if (inputBuscador){
+
+        inputBuscador.addEventListener('keypress', function (e){
+
+            if (e.key === 'Enter'){
+                realizarBusqueda();
+            }
+        });
+    }
     </script>
 </body>
 </html>
